@@ -62,6 +62,36 @@ if (!bytes.has_value())
 Tip: end every wildcard with a character that cannot start a directory name, such as `:`.
 A wildcard `data` would also match `database/x.bin`.
 
+## Paths are UTF-8
+
+All path text in the API (wildcards, directories, content paths, resolved paths) is UTF-8 in
+ordinary `char` strings. xvfs converts it explicitly wherever it touches the filesystem:
+
+- UTF-8 text becomes a `std::filesystem::path` through `std::u8string`, so the standard library
+  decodes it as UTF-8 on every platform: to UTF-16 on Windows, unchanged bytes on Linux and PS5.
+  The active Windows code page plays no part, and the deprecated `std::filesystem::u8path` is
+  not used.
+- Text that is not well-formed UTF-8 (overlong forms, surrogates, code points above U+10FFFF,
+  cut-off sequences) is rejected with `error_code::invalid_utf8` before any filesystem call,
+  the same way on every platform.
+- `resolve_path` is pure text: it passes bytes through and does not validate them. The check
+  happens when a path reaches the filesystem (`read_*`, `open_input_file`, `is_file`,
+  `is_directory`, `create_directories`).
+
+Use `xvfs/native_path.h` at your own boundaries:
+
+```cpp
+// Hand a real directory to xvfs as UTF-8.
+const std::string root = xvfs::make_utf8_path(std::filesystem::current_path());
+const xvfs::error_code added = vfs.add_wildcard("local:", root);
+
+// Open a resolved path with another library.
+const xvfs::result<std::filesystem::path> native = xvfs::make_native_path(resolved_text);
+```
+
+`make_utf8_path` writes `/` separators. On Linux and PS5 it returns the bytes as they are, so a
+file name that is not UTF-8 on disk stays that way.
+
 ## Threading
 
 xvfs follows the standard library contract:
@@ -112,6 +142,7 @@ before any wildcard exists), `error` (a call failed; it also returns the error).
 | `xvfs/file_info.h` | `file_info_view`, `file_info`, `make_file_path` |
 | `xvfs/directory_info.h` | `directory_info_view`, `directory_info`, `make_directory_path` |
 | `xvfs/path.h` | `make_normalized_path` |
+| `xvfs/native_path.h` | `make_native_path`, `make_utf8_path`, `is_valid_utf8` |
 
 ## Building and testing
 
@@ -160,7 +191,4 @@ Include headers with their folder: `#include "xvfs/context.h"`.
 
 ## Notes
 
-- On Windows the narrow path text is converted with the active code page by the standard
-  library (`std::filesystem::path`, `std::ifstream`). Non-ASCII paths there need the process
-  code page set to UTF-8 (application manifest) until xvfs converts explicitly.
 - File reads do no newline conversion: `read_text_file` returns the bytes as they are on disk.

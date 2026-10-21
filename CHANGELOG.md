@@ -54,10 +54,16 @@ unversioned sources has to be updated (see "Migrating" below).
 - A failed read returns an error code. Before, it returned an empty container (indistinguishable
   from an empty file) and asserted in debug builds. A missing file or a directory gives
   `error_code::not_a_file`.
+- Path text is UTF-8 on every platform and is converted explicitly through `std::u8string`
+  before any filesystem call. Before, narrow strings went straight to `std::ifstream`, which on
+  Windows reads them in the active code page, so non-ASCII paths failed or opened the wrong
+  file. Malformed UTF-8 now fails with `error_code::invalid_utf8`.
 - Nothing is printed. Messages go to the optional log callback; a successful binary read is a
   `debug` message instead of a line on `std::cerr`.
 
 ### Added
+- `xvfs/native_path.h`: `make_native_path`, `make_utf8_path` and `is_valid_utf8`, and the
+  error code `error_code::invalid_utf8`.
 - `xvfs::context::resolve_path_into`, which resolves into a caller buffer without allocating.
 - `xvfs::log_callback` and `context::set_log_callback`.
 - `xvfs::input_file` and `xvfs::open_input_file`, to read into memory the caller owns.
