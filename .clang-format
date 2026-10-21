@@ -1,0 +1,67 @@
+# Formatting rules for xvfs. Copied from the Dyronix studio settings (dyronix-engine/.clang-format,
+# 2026-10-21) so the library looks like the code that vendors it. Tested with clang-format 18.
+# Option names that change in clang-format 19 are noted inline.
+Language: Cpp
+Standard: c++20
+BasedOnStyle: LLVM
+IndentWidth: 4                              # owner's code (processingpp, Retro), P22
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 0                              # D12, decided: no wrapping to a character count; --dry-run --Werror still checks everything else
+# Allman everywhere except before a lambda body (C37, owner 2026-10-21: small lambdas may sit on one
+# line). With plain Allman, clang-format 18 cannot keep a short lambda on one line under ColumnLimit 0:
+# it splits it as "[](x)\n { return x; }". The cost: a multi-line lambda opens its brace on the
+# introducer line, "[](int a) {", as in BUZ (.clang-format BeforeLambdaBody: false).
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterExternBlock: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+InsertBraces: true                          # owner: always braces (needs clang-format 15 or newer)
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None      # D8, decided
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortLambdasOnASingleLine: All         # C37: a short lambda may stay on one line; the author's line breaks are kept (ColumnLimit 0)
+IndentCaseLabels: false                     # D7, decided
+PointerAlignment: Left                      # P17: T* p
+ReferenceAlignment: Left                    # P17: T& r
+QualifierAlignment: Left                    # P21: west const, const T&. clang-format docs: may produce incorrect code; review big reformats (CODING-CONVENTIONS.md section 4)
+AccessModifierOffset: -4                    # public: level with class
+NamespaceIndentation: All                   # D13, decided
+FixNamespaceComments: true                  # P16
+BreakConstructorInitializers: BeforeComma   # P21: one initializer per line, comma first
+PackConstructorInitializers: Never          # P21
+AlwaysBreakTemplateDeclarations: Yes        # P21: template <...> on its own line (renamed BreakTemplateDeclarations in clang-format 19)
+SpaceAfterTemplateKeyword: true             # D10, decided: template <typename T>
+SpaceBeforeParens: ControlStatements        # P22: if (x), not if(x)
+KeepEmptyLinesAtTheStartOfBlocks: false     # P2
+MaxEmptyLinesToKeep: 1                      # P2
+# D1 and P47, decided 2026-10-21: four groups, sorted inside each group, one blank line between groups:
+# own header (clang-format finds it by file name), project "...", third-party and platform SDK <x/y.h>,
+# standard library <name>. Categories are tried in order; the first match wins.
+IncludeBlocks: Regroup
+SortIncludes: CaseSensitive
+IncludeCategories:
+  - Regex: '^<[a-z_0-9]+>$'                 # standard library: <cstdint>, <vector>
+    Priority: 4
+  - Regex: '^<'                             # third-party and platform SDK: <spdlog/logger.h>, <windows.h>
+    Priority: 3
+  - Regex: '^"'                             # project, from the repository root: "engine/core/hash.h"
+    Priority: 2
+InsertNewlineAtEOF: true                    # P57 (k), decided 2026-10-21 (needs clang-format 16 or newer)
