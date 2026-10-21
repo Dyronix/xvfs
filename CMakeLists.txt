@@ -10,8 +10,9 @@ project(xvfs
     HOMEPAGE_URL "https://github.com/Dyronix/xvfs"
     LANGUAGES CXX)
 
-# Installing and strict warnings are on only when xvfs is the top-level project, so a
+# Tests, installing and strict warnings are on only when xvfs is the top-level project, so a
 # project that vendors it with add_subdirectory gets the library and nothing else.
+option(XVFS_BUILD_TESTS "Build the xvfs tests and register them with CTest" ${PROJECT_IS_TOP_LEVEL})
 option(XVFS_INSTALL "Generate the xvfs install and package export rules" ${PROJECT_IS_TOP_LEVEL})
 option(XVFS_STRICT_WARNINGS "Compile xvfs with -Wall -Wextra -Wpedantic (/W4 on MSVC)" ${PROJECT_IS_TOP_LEVEL})
 option(XVFS_WARNINGS_AS_ERRORS "Treat xvfs compiler warnings as errors" OFF)
@@ -103,4 +104,9 @@ if(XVFS_INSTALL)
         ${CMAKE_CURRENT_BINARY_DIR}/xvfs-config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/xvfs-config-version.cmake
         DESTINATION ${xvfs_config_dir})
+endif()
+
+if(XVFS_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
 endif()
