@@ -5,7 +5,7 @@
 #include <string_view>
 
 // Internal to xvfs (not installed): the separator rules shared by the path parsers and the
-// context. Small and called per character, so the bodies stay in the header (P42 carve-out).
+// context. Small and called per character, so the bodies stay in the header to be inlined.
 // Threading: pure functions, safe from any thread.
 
 namespace xvfs::detail

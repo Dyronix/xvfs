@@ -2,6 +2,7 @@
 
 #include "log_message.h"
 #include "path_text.h"
+#include "xvfs/path.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -19,15 +20,6 @@ namespace xvfs
             bool needs_separator = false;
             std::size_t size = 0;
         };
-
-        //-------------------------------------------------------------------------
-        std::string make_normalized_copy(std::string_view text)
-        {
-            std::string copy(text);
-            std::ranges::transform(copy, copy.begin(), detail::to_forward_slash);
-
-            return copy;
-        }
 
         //-------------------------------------------------------------------------
         bool starts_with_normalized(std::string_view path, std::string_view prefix)
@@ -121,8 +113,8 @@ namespace xvfs
             return error_code::empty_wildcard;
         }
 
-        std::string name = make_normalized_copy(wildcard);
-        std::string real_directory = make_normalized_copy(directory);
+        std::string name = make_normalized_path(wildcard);
+        std::string real_directory = make_normalized_path(directory);
 
         detail::log_message(m_log_callback, log_level::info, {"[xvfs] Adding wildcard '", name, "' for directory '", real_directory, "'"});
 
@@ -150,7 +142,7 @@ namespace xvfs
         const wildcard_entry* match = find_longest_match(path);
         if (match == nullptr)
         {
-            return result<std::string>(make_normalized_copy(path));
+            return result<std::string>(make_normalized_path(path));
         }
 
         const resolve_plan plan = make_plan(match->directory, path.substr(match->name.size()));
