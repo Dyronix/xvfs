@@ -2,6 +2,7 @@
 #include "xvfs/context.h"
 #include "xvfs/fileio.h"
 #include "xvfs/input_file.h"
+#include "xvfs/native_path.h"
 
 #include <array>
 #include <cstddef>
@@ -73,7 +74,7 @@ namespace
     xvfs::context make_context(const xvfs_test::temp_directory& directory)
     {
         xvfs::context vfs;
-        const error_code added = vfs.add_wildcard("test:", directory.get_path().generic_string());
+        const error_code added = vfs.add_wildcard("test:", xvfs::make_utf8_path(directory.get_path()));
         static_cast<void>(added);
 
         return vfs;

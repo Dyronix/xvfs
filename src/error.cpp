@@ -11,6 +11,8 @@ namespace xvfs
             return "no error";
         case error_code::empty_path:
             return "the path is empty";
+        case error_code::invalid_utf8:
+            return "the path is not well-formed UTF-8";
         case error_code::empty_wildcard:
             return "the wildcard is empty";
         case error_code::no_wildcards:

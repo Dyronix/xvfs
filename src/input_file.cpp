@@ -2,6 +2,7 @@
 
 #include "log_message.h"
 #include "xvfs/context.h"
+#include "xvfs/native_path.h"
 
 #include <filesystem>
 #include <ios>
@@ -70,15 +71,22 @@ namespace xvfs
 
         std::string real_path = std::move(resolved).get_value();
 
+        const result<std::filesystem::path> native = make_native_path(real_path);
+        if (!native.has_value())
+        {
+            detail::log_message(log, log_level::error, {"[xvfs] The path of '", path, "' is not valid UTF-8"});
+            return result<input_file>(native.get_error());
+        }
+
         // An std::ifstream opens a directory on some platforms, so ask the filesystem first.
         std::error_code status_error;
-        if (!std::filesystem::is_regular_file(real_path, status_error))
+        if (!std::filesystem::is_regular_file(native.get_value(), status_error))
         {
             detail::log_message(log, log_level::error, {"[xvfs] File '", path, "' at '", real_path, "' was not found"});
             return result<input_file>(error_code::not_a_file);
         }
 
-        std::ifstream stream(real_path, std::ios::binary | std::ios::ate);
+        std::ifstream stream(native.get_value(), std::ios::binary | std::ios::ate);
         if (!stream.is_open())
         {
             detail::log_message(log, log_level::error, {"[xvfs] File '", path, "' at '", real_path, "' could not be opened"});

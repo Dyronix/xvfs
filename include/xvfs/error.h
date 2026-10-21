@@ -26,6 +26,7 @@ namespace xvfs
     {
         none,              ///< Success.
         empty_path,        ///< The path to resolve was empty.
+        invalid_utf8,      ///< Path text is not well-formed UTF-8, so it cannot name a file.
         empty_wildcard,    ///< context::add_wildcard was given an empty wildcard.
         no_wildcards,      ///< The context has no wildcards, so nothing can be resolved.
         buffer_too_small,  ///< The caller's buffer cannot hold the resolved path.

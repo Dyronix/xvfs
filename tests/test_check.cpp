@@ -1,5 +1,6 @@
 #include "test_check.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstdio>
@@ -67,7 +68,11 @@ namespace xvfs_test
     //-------------------------------------------------------------------------
     std::filesystem::path temp_directory::write_file(std::string_view relative_path, std::string_view contents) const
     {
-        const std::filesystem::path file = m_path / relative_path;
+        // Built from char8_t on purpose, independent of xvfs::make_native_path, so the UTF-8
+        // tests compare the library against the standard library.
+        std::u8string utf8(relative_path.size(), u8'\0');
+        std::ranges::transform(relative_path, utf8.begin(), [](char c) { return static_cast<char8_t>(c); });
+        const std::filesystem::path file = m_path / std::filesystem::path(utf8);
         std::filesystem::create_directories(file.parent_path());
 
         std::ofstream stream(file, std::ios::binary);

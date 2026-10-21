@@ -30,6 +30,7 @@ target_sources(xvfs
         src/input_file.cpp
         src/log_message.cpp
         src/log_message.h
+        src/native_path.cpp
         src/path.cpp
         src/path_text.h
 )
@@ -42,6 +43,7 @@ set(xvfs_public_headers
     include/xvfs/fileio.h
     include/xvfs/input_file.h
     include/xvfs/log.h
+    include/xvfs/native_path.h
     include/xvfs/path.h
     include/xvfs/result.h
 )

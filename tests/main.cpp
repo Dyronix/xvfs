@@ -13,6 +13,7 @@ int main(int argc, char** argv)
         xvfs_test::test_group{.name = "fileio", .tests = xvfs_test::get_fileio_tests()},
         xvfs_test::test_group{.name = "path", .tests = xvfs_test::get_path_tests()},
         xvfs_test::test_group{.name = "threading", .tests = xvfs_test::get_threading_tests()},
+        xvfs_test::test_group{.name = "utf8", .tests = xvfs_test::get_utf8_tests()},
     };
 
     const std::span<char*> arguments(argv, static_cast<std::size_t>(argc));

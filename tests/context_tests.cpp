@@ -238,7 +238,7 @@ namespace
     check every_error_has_a_message()
     {
         check c;
-        for (const error_code error : {error_code::none, error_code::empty_path, error_code::empty_wildcard, error_code::no_wildcards, error_code::buffer_too_small, error_code::not_a_file, error_code::open_failed, error_code::size_query_failed, error_code::read_failed, error_code::filesystem_error})
+        for (const error_code error : {error_code::none, error_code::empty_path, error_code::invalid_utf8, error_code::empty_wildcard, error_code::no_wildcards, error_code::buffer_too_small, error_code::not_a_file, error_code::open_failed, error_code::size_query_failed, error_code::read_failed, error_code::filesystem_error})
         {
             const std::string_view message = xvfs::get_error_message(error);
             c.expect(!message.empty() && message != "unknown error", "message");

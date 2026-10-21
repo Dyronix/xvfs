@@ -72,7 +72,7 @@ namespace xvfs
     /// @brief Resolves a content path and opens the file it names.
     /// @param owner The context that resolves the path and logs; it must outlive the file.
     /// @param path The content path, for example `content:/maps/harbor.map`.
-    /// @return The open file, or the resolve error, error_code::not_a_file,
+    /// @return The open file, or the resolve error, error_code::invalid_utf8, error_code::not_a_file,
     ///         error_code::open_failed or error_code::size_query_failed.
     [[nodiscard]] result<input_file> open_input_file(const context& owner, std::string_view path);
 } // namespace xvfs

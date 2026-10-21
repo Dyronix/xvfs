@@ -42,7 +42,7 @@ namespace xvfs_test
 
         const std::filesystem::path& get_path() const;
 
-        // Writes a file below the directory and returns its full path.
+        // Writes a file below the directory and returns its full path. relative_path is UTF-8.
         std::filesystem::path write_file(std::string_view relative_path, std::string_view contents) const;
 
     private:
@@ -71,4 +71,5 @@ namespace xvfs_test
     std::span<const test_case> get_fileio_tests();
     std::span<const test_case> get_path_tests();
     std::span<const test_case> get_threading_tests();
+    std::span<const test_case> get_utf8_tests();
 } // namespace xvfs_test

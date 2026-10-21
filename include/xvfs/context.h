@@ -25,6 +25,9 @@
 /// // path.get_value() == "/home/me/game/content/maps/harbor.map"
 /// @endcode
 ///
+/// All path text is UTF-8 (see xvfs/native_path.h). Resolving is pure text and does not
+/// validate it; the filesystem functions in xvfs/fileio.h do.
+///
 /// Rules:
 /// - A wildcard matches only at the start of a path. When several match, the longest wins.
 /// - The text after the wildcard is joined to the wildcard's directory with exactly one `/`.

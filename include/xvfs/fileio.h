@@ -23,6 +23,9 @@
 /// const bool ready = xvfs::is_file(vfs, "content:/maps/harbor.map");
 /// @endcode
 ///
+/// Paths are UTF-8 and are converted with make_native_path() before the filesystem sees them;
+/// malformed UTF-8 fails with error_code::invalid_utf8.
+///
 /// Ownership: the returned containers belong to the caller and use the caller's allocator.
 /// Threading: safe to call from many threads at once with the same const context.
 /// Failure: every read returns a result and logs the details through the context's callback.
@@ -52,8 +55,8 @@ namespace xvfs
     /// @brief Says whether a content path names an existing regular file.
     /// @param owner The context that resolves the path.
     /// @param path The content path.
-    /// @return True for a regular file. False for a directory, a missing path or a resolve
-    ///         error (the error is logged).
+    /// @return True for a regular file. False for a directory, a missing path, malformed UTF-8
+    ///         or a resolve error (the error is logged).
     bool is_file(const context& owner, std::string_view path);
 
     /// @brief Says whether a content path names an existing directory.
@@ -65,7 +68,7 @@ namespace xvfs
     /// @brief Creates a directory and any missing parents. Existing directories are fine.
     /// @param owner The context that resolves the path.
     /// @param path The content path of the directory.
-    /// @return error_code::none, the resolve error, or error_code::filesystem_error.
+    /// @return error_code::none, the resolve error, error_code::invalid_utf8 or error_code::filesystem_error.
     [[nodiscard]] error_code create_directories(const context& owner, std::string_view path);
 
     template <typename Allocator>

@@ -1,6 +1,7 @@
 #include "test_check.h"
 #include "xvfs/context.h"
 #include "xvfs/fileio.h"
+#include "xvfs/native_path.h"
 
 #include <array>
 #include <atomic>
@@ -93,7 +94,7 @@ namespace
             const std::lock_guard<std::mutex> lock(log_mutex);
             ++logged;
         });
-        c.expect(vfs.add_wildcard("test:", directory.get_path().generic_string()) == xvfs::error_code::none, "add");
+        c.expect(vfs.add_wildcard("test:", xvfs::make_utf8_path(directory.get_path())) == xvfs::error_code::none, "add");
         const xvfs::context& shared = vfs;
 
         std::atomic<int32_t> failures{0};
