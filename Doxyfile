@@ -1,7 +1,7 @@
 # Minimal Doxygen configuration for the xvfs public API. Run `doxygen` from the repository root.
 # Output: out/docs/html. Only values that differ from the Doxygen defaults are listed.
 PROJECT_NAME           = xvfs
-PROJECT_NUMBER         = 1.0.0
+PROJECT_NUMBER         = 1.0.1
 PROJECT_BRIEF          = "Wildcard content paths and whole-file reads"
 OUTPUT_DIRECTORY       = out/docs
 INPUT                  = include/xvfs README.md

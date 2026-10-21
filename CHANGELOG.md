@@ -3,7 +3,12 @@
 All notable changes to xvfs. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project uses [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] - unreleased
+## [1.0.1] - 2026-10-21
+
+### Fixed
+- The changelog gives the release date of 1.0.0 instead of "unreleased". No code changes.
+
+## [1.0.0] - 2026-10-21
 
 First versioned release. Almost every public name changed; code written against the earlier,
 unversioned sources has to be updated (see "Migrating" below).
